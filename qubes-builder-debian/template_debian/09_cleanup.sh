@@ -38,6 +38,8 @@ if [ "$DIST" == "jessie" ]; then
     sed -i '/./{H;$!d};x;/exim4\/mailname/d'  "${INSTALLDIR}/var/cache/debconf/config.dat-old" || true
 fi
 sed -i "s/`hostname`/$DIST/"  "${INSTALLDIR}/etc/hosts" || true
+sed -i "s#http://HTTPS///#https://#"  "${INSTALLDIR}/etc/apt/sources.list" || true
+sed -i "s#http://HTTPS///#https://#"  "${INSTALLDIR}/etc/apt/sources.list.d/*" || true
 
 # ==============================================================================
 # Execute any template flavor or sub flavor 'post' scripts
