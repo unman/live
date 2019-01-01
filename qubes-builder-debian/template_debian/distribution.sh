@@ -283,7 +283,7 @@ function updateDebianSourceList() {
     fi
 
     # Add Debian security repositories
-    source="deb https://deb.debian.org/debian-security ${DEBIANVERSION}/updates main contrib non-free"
+    source="deb http://HTTPS///deb.debian.org/debian-security ${DEBIANVERSION}/updates main contrib non-free"
     if ! grep -r -q "$source" "${list}"*; then
         echo -e "$source" >> "${list}"
     fi
