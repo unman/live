@@ -433,7 +433,7 @@ installQubesRepo() {
     cat > "${INSTALLDIR}/etc/apt/sources.list.d/qubes-builder.list" <<EOF
 deb [trusted=yes] file:/tmp/qubes_repo ${DIST} main
 EOF
-    if [ -n "$USE_QUBES_REPO_VERSION" ]; then
+    if [[ -n "$USE_QUBES_REPO_VERSION" && $DISTRIBUTION != "qubuntu" ]]; then
         cat >> "${INSTALLDIR}/etc/apt/sources.list.d/qubes-builder.list" <<EOF
 deb [arch=amd64] https://deb.qubes-os.org/r${USE_QUBES_REPO_VERSION}/vm $DIST main
 EOF
@@ -443,6 +443,8 @@ deb [arch=amd64] https://deb.qubes-os.org/r${USE_QUBES_REPO_VERSION}/vm ${DIST}-
 EOF
         fi
         chroot_cmd apt-key add - < ${SCRIPTSDIR}/../keys/qubes-debian-r${USE_QUBES_REPO_VERSION}.asc
+    elif [[ -n "$USE_QUBES_REPO_VERSION" && $DISTRIBUTION == "qubuntu" ]]; then
+        echo "Cannot use Pre-Built packages from Qubes when building Ubuntu template"
     fi
 }
 
