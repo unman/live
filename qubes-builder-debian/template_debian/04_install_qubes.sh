@@ -52,6 +52,13 @@ EOF
     #### '----------------------------------------------------------------------
     info ' Install Qubes packages listed in packages_qubes.list file(s)'
     #### '----------------------------------------------------------------------
+    if [ ${DIST} == "bullseye" ]; then 
+    APT_GET_OPTIONS+=" -o APT::Install-Recommends=0  -o APT::Install-Suggests=0"
+    echo `pwd`  
+    echo ${SCRIPTSDIR}
+    sed -i /qubes-vm-recommended/d ${SCRIPTSDIR}/packages_qubes_standard.list
+    fi
+    installPackages packages_qubes.list
 
     if ! containsFlavor "minimal" && [ "0$TEMPLATE_ROOT_WITH_PARTITIONS" -eq 1 ]; then
         #### '------------------------------------------------------------------
