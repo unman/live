@@ -292,7 +292,7 @@ function updateDebianSourceList() {
     if ! grep -r -q "$source" "${list}"*; then
         echo -e "$source" >> "${list}"
     fi
-    source="#deb-src https://HTTPS///deb.debian.org/debian-security ${DEBIANVERSION}${security_suffix} main contrib non-free"
+    source="#deb-src http://HTTPS///deb.debian.org/debian-security ${DEBIANVERSION}${security_suffix} main contrib non-free"
     if ! grep -r -q "$source" "${list}"*; then
         echo -e "$source\n" >> "${list}"
     fi
