@@ -35,6 +35,14 @@ if ! [ -f "${INSTALLDIR}/${TMPDIR}/.prepared_qubes" ]; then
     #### '----------------------------------------------------------------------
     installQubesRepo
     aptUpdate
+    if [ ${DIST} == "bullseye" ]; then
+    cat > "${INSTALLDIR}/etc/apt/preferences.d/1hold" <<'EOF'
+Package: qubes-vm-recommended
+Pin: release *
+Pin-Priority: -999
+EOF
+
+    fi
 
     #### '----------------------------------------------------------------------
     info ' Execute any distribution specific flavor or sub flavor'
@@ -44,7 +52,6 @@ if ! [ -f "${INSTALLDIR}/${TMPDIR}/.prepared_qubes" ]; then
     #### '----------------------------------------------------------------------
     info ' Install Qubes packages listed in packages_qubes.list file(s)'
     #### '----------------------------------------------------------------------
-    installPackages packages_qubes.list
 
     if ! containsFlavor "minimal" && [ "0$TEMPLATE_ROOT_WITH_PARTITIONS" -eq 1 ]; then
         #### '------------------------------------------------------------------
