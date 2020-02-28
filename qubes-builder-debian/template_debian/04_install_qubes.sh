@@ -60,7 +60,8 @@ EOF
     installPackages packages_qubes.list
 
     if [ ${DIST} == "bullseye" ]; then 
-    APT_GET_OPTIONS-=" -o APT::Install-Recommends=0  -o APT::Install-Suggests=0"
+    APT_GET_OPTIONS=${APT_GET_OPTIONS/ -o APT::Install-Recommends=0/}
+    APT_GET_OPTIONS=${APT_GET_OPTIONS/ -o APT::Install-Suggests=0/}
     echo qubes-vm-recommended >> ${SCRIPTSDIR}/packages_qubes_standard.list
     fi
 
