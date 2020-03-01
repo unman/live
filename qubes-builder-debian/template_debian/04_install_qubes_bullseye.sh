@@ -1,4 +1,3 @@
-
 #!/bin/bash -e
 # vim: set ts=4 sw=4 sts=4 et :
 
@@ -16,4 +15,3 @@ debug " Installing packages from qubes-vm-recommended in bullseye
 updateDebianSourceList
 aptUpdate
 installPackages ${SCRIPTSDIR}/packages_qubes_bullseye.list
-
