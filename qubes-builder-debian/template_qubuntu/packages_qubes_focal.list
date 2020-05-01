@@ -18,7 +18,6 @@ qubes-core-agent-passwordless-root
 qubes-gpg-split
 qubes-img-converter
 qubes-input-proxy-sender
-qubes-mgmt-salt-vm-connector
 qubes-pdf-converter
 qubes-thunderbird
 qubes-usb-proxy
