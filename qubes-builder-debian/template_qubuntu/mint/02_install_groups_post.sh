@@ -8,3 +8,4 @@ updateMintSourceList
 
 aptInstall mint-meta-mate
 #chroot_cmd apt-get purge -y unattended-upgrades 
+installPackages ${SCRIPTSDIR}/packages_mint.list

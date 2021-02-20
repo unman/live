@@ -326,10 +326,10 @@ function updateQubuntuSourceList() {
 # ==============================================================================
 function updateMintSourceList() {
     if [ -f "${INSTALLDIR}/etc/apt/sources.list" ]; then
-    :> ${INSTALLDIR}/etc/apt/sources.list
+    echo "#/etc/apt/sources.list" > ${INSTALLDIR}/etc/apt/sources.list
     fi
-    if [ ${DIST} == 'bionic' ]; then
-        MINT_DIST='tricia'
+    if [ ${DIST} == 'focal' ]; then
+        MINT_DIST='ulyssa'
     fi
     chroot_cmd apt-key add - < ${SCRIPTSDIR}/../keys/mint-archive-keyring.gpg
 
