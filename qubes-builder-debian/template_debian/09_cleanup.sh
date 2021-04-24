@@ -16,6 +16,7 @@ debug ' Cleaning up...'
 # Execute any template flavor or sub flavor 'pre' scripts
 # ==============================================================================
 buildStep "${0}" "pre"
+read -p1
 
 #### '-------------------------------------------------------------------------
 info ' Cleaning up  any left over files from installation'
@@ -37,9 +38,12 @@ if [ "$DIST" == "jessie" ]; then
     sed -i '/./{H;$!d};x;/dc_other_hostnames/d'  "${INSTALLDIR}/var/cache/debconf/config.dat-old" || true
     sed -i '/./{H;$!d};x;/exim4\/mailname/d'  "${INSTALLDIR}/var/cache/debconf/config.dat-old" || true
 fi
+read -p1
 sed -i "s/`hostname`/$DIST/"  "${INSTALLDIR}/etc/hosts" || true
 sed -i "s#http://HTTPS///#https://#"  "${INSTALLDIR}/etc/apt/sources.list" || true
-sed -i "s#http://HTTPS///#https://#"  "${INSTALLDIR}/etc/apt/sources.list.d/*" || true
+sed -i "s#http://HTTPS///#https://#"  "${INSTALLDIR}/etc/apt/sources.list.d/kali.list" || true
+sed -i "s#http://HTTPS///#https://#"  "${INSTALLDIR}/etc/apt/sources.list.d/parrot.list" || true
+sed -i "s#http://HTTPS///#https://#"  "${INSTALLDIR}/etc/apt/sources.list.d/qubes-r4.list" || true
 
 # ==============================================================================
 # Execute any template flavor or sub flavor 'post' scripts
