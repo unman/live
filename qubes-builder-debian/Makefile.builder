@@ -9,7 +9,7 @@ ifneq (,$(findstring $(DIST),wheezy jessie stretch buster bullseye parrot ))
     DIST_TAG := $(strip $(subst buster, deb10, $(DIST_TAG)))
     DIST_TAG := $(strip $(subst bullseye, deb11, $(DIST_TAG)))
 endif
-ifneq (,$(findstring $(DIST),trusty xenial bionic eoan focal))
+ifneq (,$(findstring $(DIST),trusty xenial bionic eoan focal jammy))
     DEBIAN_PLUGIN_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
     TEMPLATE_ENV_WHITELIST += SYSTEMD_NSPAWN_ENABLE
     DISTRIBUTION := qubuntu
