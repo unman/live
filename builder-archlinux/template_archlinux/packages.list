@@ -1,0 +1,50 @@
+# X
+xorg-server
+xterm
+
+# Force pulseaudio over pipewire for now
+pulseaudio
+
+# Basic utils
+ethtool
+net-tools
+sudo
+wget
+diffutils
+python-urllib3
+
+# User env
+ldns
+tmux
+vim
+
+# Fonts
+terminus-font
+ttf-bitstream-vera
+ttf-dejavu
+ttf-inconsolata
+ttf-linux-libertine
+# Particularly good Unicode coverage:
+noto-fonts
+noto-fonts-emoji
+
+# Gnome
+gnome-settings-daemon
+gtk-engines
+gvfs
+lxappearance
+
+# XFCE
+leafpad
+thunar
+thunar-volman
+xfce4-terminal
+xfce4-settings
+
+# Major "productivity" applications
+evince
+firefox
+thunderbird
+
+# Hardening-related
+checksec

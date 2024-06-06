@@ -1,0 +1,209 @@
+# Makefile for Archlinux packages build
+#
+# For "API" documentation check Makefile.generic
+#
+# Variables supposed to be in component's Makefile.builder:
+#  ARCH_BUILD_DIRS - list of archlinux directories containing build sripts (PKGFILES...)
+
+### Variables required as per Makefile.generic:
+#
+#   PACKAGE_LIST - list of packages to build. Targets 'build-dep', 'package' and 'copy-out'
+#     will be run for each word on the list, with PACKAGE set to current word
+#   DIST_BUILD_DIR - basedir for sources inside of chroot - relative to
+#     CHROOT_DIR (qubes-src will be created in this directory)
+#
+PACKAGE_LIST = $(ARCH_BUILD_DIRS)
+DIST_BUILD_DIR = /home/user
+
+### Local variables
+RUN_AS_USER = user
+
+
+DEBUG ?= 0
+ifneq ($(DEBUG),0)
+  $(info ╔══ DEBUG ══════════════════════════════════════════════════════════════════════)
+  $(info ║ Repo Variables)
+  $(info ╠───────────────────────────────────────────────────────────────────────────────)
+  $(info ║ SRC_DIR:               $(SRC_DIR))                # qubes-src
+  $(info ║ CHROOT_DIR:            $(CHROOT_DIR))             # /home/user/qubes-builder/chroot-archlinux
+  $(info ║ BUILDER_REPO_DIR:      $(BUILDER_REPO_DIR))       # /home/user/qubes-builder/qubes-packages-mirror-repo/archlinux
+  $(info ╠───────────────────────────────────────────────────────────────────────────────)
+  $(info ║ Chroot Variables)
+  $(info ╠───────────────────────────────────────────────────────────────────────────────)
+  $(info ║ CHROOT_DIR:            $(CHROOT_DIR))             #
+  $(info ║ DIST_BUILD_DIR:        $(DIST_BUILD_DIR))         # /home/user
+  $(info ║ DIST_SRC:              $(DIST_SRC))               # /home/user/qubes-src/repo
+  $(info ╠───────────────────────────────────────────────────────────────────────────────)
+  $(info ║ Build Variables)
+  $(info ╠───────────────────────────────────────────────────────────────────────────────)
+  $(info ║ ARCHLINUX_PLUGIN_DIR:  $(ARCHLINUX_PLUGIN_DIR))   # /home/user/qubes-builder/qubes-src/builder-archlinux
+  $(info ║ CACHEDIR:              $(CACHEDIR))               # cache/archlinux
+  $(info ║ PACKAGE_LIST:          $(PACKAGE_LIST))           # archlinux
+  $(info ║ DISTRIBUTION:          $(DISTRIBUTION))           # archlinux
+  $(info ║ DIST:                  $(DIST))                   #
+  $(info ║ COMPONENT:             $(COMPONENT))              #
+  $(info ║ PACKAGE_SET:           $(PACKAGE_SET))            # vm
+  $(info ║ CHROOT_ENV:            $(CHROOT_ENV))             # BACKEND_VMM=xen
+  $(info ╠───────────────────────────────────────────────────────────────────────────────)
+  $(info ║ Repository Variables)
+  $(info ╠───────────────────────────────────────────────────────────────────────────────)
+  $(info ║ UPDATE_REPO:           $(UPDATE_REPO))            #
+  $(info ║ TARGET_REPO:           $(TARGET_REPO))            #
+  $(info ║ SNAPSHOT_REPO:         $(SNAPSHOT_REPO))          #
+  $(info ║ SNAPSHOT_FILE:         $(SNAPSHOT_FILE))          #
+  $(info ║ REPO_PROXY:            $(REPO_PROXY))             #
+  $(info ║ ARCHLINUX_SRC_PREFIX:  $(ARCHLINUX_SRC_PREFIX))   # http://mirrors.kernel.org/archlinux
+  $(info ║ ARCHLINUX_REL_VERSION: $(ARCHLINUX_REL_VERSION))  #
+  $(info ║ ARCHLINUX_MIRROR:      $(ARCHLINUX_MIRROR))       # default defined in prepare-chroot-base
+  $(info ╚═══════════════════════════════════════════════════════════════════════════════)
+endif
+
+define bin_packages
+	$(shell cd $(ORIG_SRC) && \
+            if [ 0`stat -c %Y $(OUTPUT_DIR)/$(notdir $(1)).list 2>/dev/null` -ge \
+                    0`git log -1 --pretty=format:%ct` ]; then \
+                cat $(OUTPUT_DIR)/$(notdir $(1)).list; \
+            else \
+                echo unknown.package; \
+            fi)
+endef
+
+### Targets required by Makefile.generic to build packages:
+
+# dist-prepare-chroot - initial preparation of chroot environment
+#   Specifically, load mounts for the build chroot
+dist-prepare-chroot: $(CHROOT_DIR)/home/user/.prepared_base
+	@echo "--> Archlinux dist-prepare-chroot (makefile):"
+	@sudo mkdir -p "$(CACHEDIR)/pacman_cache/pkg"
+	@sudo touch "$(CACHEDIR)/pacman_cache/pkg/.mnt"
+	@# qubes pkgs may be from old runs and no longer match the repo hashes
+	@sudo rm "$(CACHEDIR)/pacman_cache/pkg"/qubes-*.pkg.tar.* 2>/dev/null || true
+	@mkdir -p "$(BUILDER_REPO_DIR)/pkgs"
+	@mkdir -p "$(CHROOT_DIR)/var/cache/pacman"
+	@mkdir -p "$(CHROOT_DIR)/tmp/qubes-packages-mirror-repo"
+
+# Create the build chroot, if it does not already exist
+$(CHROOT_DIR)/home/user/.prepared_base: $(ARCHLINUX_PLUGIN_DIR)/prepare-chroot-builder
+	@echo "--> Archlinux preparing build chroot environment"
+	@sudo -E "$(ARCHLINUX_PLUGIN_DIR)/prepare-chroot-builder" "$(CHROOT_DIR)" "$(CACHEDIR)" || exit 1
+	@touch "$(CHROOT_DIR)/home/user/.prepared_base"
+
+# dist-prep - some preparation of sources (if needed)
+dist-prep:
+	@true
+
+# dist-build-dep - install build dependencies (should operate on chroot directory)
+dist-build-dep:
+	@echo "--> Archlinux dist-build-dep (makefile)"
+	@echo "  --> Generate locales..."
+	@echo "en_US.UTF-8 UTF-8" | sudo tee -a $(CHROOT_DIR)/etc/locale.gen
+	@sudo $(CHROOT_ENV) chroot "$(CHROOT_DIR)" locale-gen
+	@echo "LANG=en_US.UTF-8" | sudo tee -a $(CHROOT_DIR)/etc/locale.conf
+	@sudo -E "$(ARCHLINUX_PLUGIN_DIR)/update-local-repo.sh" $(DIST)
+
+# dist-package - compile package (should operate on chroot directory)
+# TODO: makepkg doesn't seem to honor $http_proxy
+dist-package:
+	@echo "--> Archlinux dist-package (makefile)"
+ifndef PACKAGE
+	$(error "PACKAGE need to be set!")
+endif
+	@echo "  --> Building package in $(DIST_SRC)"
+	sudo systemd-nspawn --directory="$(CHROOT_DIR)" \
+		--bind="$(CACHEDIR)/pacman_cache":"/var/cache/pacman" \
+		--bind="$(BUILDER_REPO_DIR)":"/tmp/qubes-packages-mirror-repo" \
+		--keep-unit \
+		--register=no \
+		--user=user \
+		--setenv=$(CHROOT_ENV) \
+		--setenv=SOURCE_DATE_EPOCH="$(shell git -C "$$ORIG_SRC" log -1 --pretty=format:%ct)" \
+		--setenv=http_proxy="$(REPO_PROXY)" \
+		--chdir="$(DIST_SRC)" \
+		sh -c 'if ! [ -e $(PACKAGE)/PKGBUILD.in ]; then cp $(PACKAGE)/PKGBUILD* ./; fi && makepkg --syncdeps --noconfirm --skipinteg'
+
+# dist-copy-out - copy compiled package out of chroot env; this target should
+#     move packages to ORIG_SRC (distro-specific subdir) and hardlink them to
+#     BUILDER_REPO_DIR
+dist-copy-out: pkg_list_path = $(ORIG_SRC)/$(OUTPUT_DIR)/$(notdir $(PACKAGE)).list
+dist-copy-out:
+	@echo "--> Archlinux dist-copy-out (makefile)"
+	@echo "--> Done:" >&3
+	@set -e;\
+	shopt -s nullglob;\
+	mkdir -p $(ORIG_SRC)/$(OUTPUT_DIR);\
+	echo -n > $(pkg_list_path);\
+	for arch_chroot_dir in $(CHROOT_DIR)/$(DIST_SRC)/; do\
+		arch_pkg_dir=$(ORIG_SRC)/$(OUTPUT_DIR);\
+		mkdir -p $$arch_pkg_dir;\
+		for pkg in $$arch_chroot_dir/*.pkg.tar.*; do\
+			echo "      $$arch_pkg_dir/`basename $$pkg`" >&3 ;\
+			echo "$(OUTPUT_DIR)/`basename $$pkg`" >> $(pkg_list_path);\
+		done;\
+		mkdir -p $(BUILDER_REPO_DIR)/pkgs;\
+		ln -f -t $(BUILDER_REPO_DIR)/pkgs $$arch_chroot_dir/*.pkg.tar.*;\
+	done;\
+	mv -t $$arch_pkg_dir $$arch_chroot_dir/*.pkg.tar.*
+
+### Additional targets
+
+# Sign packages
+sign: sign_client = $(if $(GNUPG),$(GNUPG),gpg)
+sign:
+	@if [ -d $(ORIG_SRC)/$(OUTPUT_DIR) ]; then \
+		cd $(ORIG_SRC)/$(OUTPUT_DIR); \
+		for filename in *.pkg.tar.zst; do\
+			echo $$filename; \
+			$(sign_client) --yes --local-user "$(ARCHLINUX_SIGN_KEY)" --detach-sign -o "$$filename.sig" "$$filename";\
+			ln -f -t $(BUILDER_REPO_DIR)/pkgs "$$filename.sig";\
+		done; \
+	fi
+
+
+# Copies requested packages (based on PACKAGE_SET, COMPONENT, DIST) to
+# requested repository (UPDATE_REPO)
+update-repo:
+ifndef UPDATE_REPO
+	$(error "You need to specify destination repo in UPDATE_REPO variable")
+endif
+ifeq (,$(PACKAGE_LIST))
+	@true
+else
+ifdef SNAPSHOT_FILE
+	@echo -n > $(SNAPSHOT_FILE)
+endif
+	mkdir -p $(UPDATE_REPO)/pkgs; \
+	for package in $(PACKAGE_LIST); do\
+		pkgnames=`cat $(ORIG_SRC)/$(OUTPUT_DIR)/$$package.list`;\
+		for pkgname in $$pkgnames; do\
+			ln -f $(ORIG_SRC)/$$pkgname $(UPDATE_REPO)/pkgs/ || exit 1;\
+			ln -f $(ORIG_SRC)/$$pkgname.sig $(UPDATE_REPO)/pkgs/ 2>/dev/null;\
+			if [ -n "$(SNAPSHOT_FILE)" ]; then \
+				echo $$pkgname >> "$(SNAPSHOT_FILE)"; \
+			fi; \
+		done; \
+	done
+endif
+
+
+update-repo-from-snapshot: packages = $(shell cat $(SNAPSHOT_FILE) 2>/dev/null)
+update-repo-from-snapshot:
+ifndef UPDATE_REPO
+	$(error "You need to specify destination repo in UPDATE_REPO variable")
+endif
+	mkdir -p $(UPDATE_REPO)/pkgs; \
+	for f in $(packages); do \
+		ln -f $(subst /$(TARGET_REPO)/,/$(SNAPSHOT_REPO)/,$(UPDATE_REPO)/)pkgs/`basename $$f` $(UPDATE_REPO)/pkgs/ || exit 1; \
+		ln -f $(subst /$(TARGET_REPO)/,/$(SNAPSHOT_REPO)/,$(UPDATE_REPO)/)pkgs/`basename $$f`.sig $(UPDATE_REPO)/pkgs/ 2>/dev/null; \
+	done
+
+check-repo: packages = $(foreach pkg,$(PACKAGE_LIST),$(call bin_packages,$(pkg)))
+check-repo:
+ifndef UPDATE_REPO
+	$(error "You need to specify destination repo in UPDATE_REPO variable")
+endif
+	@if [ -n "$(strip $(packages))" ]; then \
+	    cd $(ORIG_SRC) && ls $(addprefix $(UPDATE_REPO)/pkgs/, $(notdir $(packages))) >/dev/null 2>&1 || exit 1; \
+	else \
+	    echo "`tput bold`No packages defined by $(PACKAGE_LIST), syntax error?`tput sgr0`"; \
+	    exit 1; \
+	fi

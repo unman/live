@@ -1,0 +1,11 @@
+# X
+xorg-server
+xterm
+
+# Basic utils
+ethtool
+net-tools
+sudo
+wget
+diffutils
+python-urllib3
