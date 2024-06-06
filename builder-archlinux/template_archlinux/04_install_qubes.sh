@@ -23,11 +23,13 @@ fi
 
 export PACMAN_CACHE_DIR PACMAN_CUSTOM_REPO_DIR "ALL_PROXY=$REPO_PROXY"
 
+source "${TEMPLATE_SCRIPTS_DIR}/functions.sh" >/dev/null
+
 echo "  --> Enabling x86 repos..."
 su -c "echo '[multilib]' >> $INSTALL_DIR/etc/pacman.conf"
 su -c "echo 'SigLevel = PackageRequired' >> $INSTALL_DIR/etc/pacman.conf"
 su -c "echo 'Include = /etc/pacman.d/mirrorlist' >> $INSTALL_DIR/etc/pacman.conf"
-sudo sed -Ei 's,^#(Server *= *https://mirrors\.kernel\.org/),\1,' "$INSTALL_DIR/etc/pacman.d/mirrorlist"
+sudo sed -Ei 's,^#(Server *= *http://HTTPS///mirrors\.kernel\.org/),\1,' "$INSTALL_DIR/etc/pacman.d/mirrorlist"
 
 echo "  --> Updating Qubes custom repository..."
 # Repo Add need packages to be added in the right version number order as it only keeps the last entered package version
@@ -146,3 +148,8 @@ touch "${INSTALL_DIR}/lib/modules/QUBES_NODELETE"
 
 # Remove qubes local repository definition
 sed '/### qubes-builder-begin/,/### qubes-builder-end/d' -i "${INSTALL_DIR}/etc/pacman.conf"
+
+# ==============================================================================
+# Execute any template flavor or sub flavor 'post' scripts
+# ==============================================================================
+buildStep "${0}" "post"

@@ -18,6 +18,8 @@ else
     PKGLISTFILE="${TEMPLATE_CONTENT_DIR}/packages.list"
 fi
 
+source "${TEMPLATE_SCRIPTS_DIR}/functions.sh" >/dev/null
+
 # Strip comments, then convert newlines to single spaces
 PKGGROUPS="$(sed '/^ *#/d; s/  *#.*//' "${PKGLISTFILE}" | sed ':a;N;$!ba; s/\n/ /g; s/  */ /g')"
 
@@ -35,3 +37,8 @@ echo "  --> Installing archlinux package groups..."
 echo "    --> Selected packages: ${PKGGROUPS}"
 "${TEMPLATE_CONTENT_DIR}/arch-chroot-lite" "$INSTALL_DIR" /bin/sh -c \
     "http_proxy='${REPO_PROXY}' pacman -S --needed --noconfirm --noprogressbar ${PKGGROUPS}"
+
+#### '----------------------------------------------------------------------
+echo ' Execute any template flavor or sub flavor scripts after packages are installed'
+#### '----------------------------------------------------------------------
+buildStep "$0" "packages_installed"

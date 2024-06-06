@@ -17,6 +17,13 @@ else
     echo "  --> NB: No packages to clean up"
 fi
 
+echo "${INSTALL_DIR}"
+
+echo "  --> Cleaning up repository definitions..."
+sed -i s^http://HTTPS///^https://^  "${INSTALL_DIR}"/etc/pacman.d/*.disabled
+sed -i s^http://HTTPS///^https://^  "${INSTALL_DIR}"/etc/pacman.d/*mirrorlist
+sed -i s^http://HTTPS///^https://^  "${INSTALL_DIR}"/etc/pacman.d/10-qubes-options.conf
+
 # TODO: Be more deliberate here; is the umount necessary?
 # Moreover, given where this script is called, should we be bothering
 # arch-chroot-lite?

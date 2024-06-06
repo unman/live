@@ -17,7 +17,7 @@ echo "--> Archlinux 00_prepare.sh"
 if [[ -n "${REPO_PROXY+x}" ]]; then
     export "https_proxy=$REPO_PROXY" "http_proxy=$REPO_PROXY"
 fi
-ARCHLINUX_SRC_PREFIX="${ARCHLINUX_SRC_PREFIX:-https://mirrors.edge.kernel.org/archlinux}"
+ARCHLINUX_SRC_PREFIX="${ARCHLINUX_SRC_PREFIX:-http://HTTPS///mirrors.edge.kernel.org/archlinux}"
 BOOTSTRAP_TARBALL=$(wget -O- "$ARCHLINUX_SRC_PREFIX"/iso/latest/sha256sums.txt | grep -o "archlinux-bootstrap-[0-9.]*-x86_64\.tar\.[a-z]*" | head -1)
 BOOTSTRAP_URL="${ARCHLINUX_SRC_PREFIX}/iso/latest/${BOOTSTRAP_TARBALL}"
 
