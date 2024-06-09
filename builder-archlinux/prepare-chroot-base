@@ -13,9 +13,14 @@ INSTALL_DIR="$1"
 
 BOOTSTRAP_DIR="${CACHE_DIR}/bootstrap"
 DEFAULT_ARCHLINUX_MIRROR="\
-http://HTTPS///mirror.osbeck.com/archlinux/
-,http://md.mirrors.hacktegic.com/archlinux/
-,http://mirror.sunred.org/archlinux/
+http://HTTPS///mirror.osbeck.com/archlinux\
+,http://md.mirrors.hacktegic.com/archlinux\
+,http://mirror.lty.me/archlinux\
+,http://HTTPS///us.mirrors.cicku.me/archlinux\
+,http://archlinux.thaller.ws\
+,http://mirrors.bjg.at/arch\
+,http://arch.jensgutermuth.de
+,http://mirror.sunred.org/archlinux\
 ,http://HTTPS///mirror.rackspace.com/archlinux\
 ,http://HTTPS///arch.mirror.constant.com\
 ,http://HTTPS///mirror.f4st.host/archlinux\
@@ -70,4 +75,3 @@ export PACMAN_CACHE_MOUNT_DIR="${BOOTSTRAP_DIR}/mnt/var/cache/pacman"
 unset PACMAN_CACHE_MOUNT_DIR
 
 touch "${INSTALL_DIR}/.prepared_base"
-
