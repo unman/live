@@ -1,0 +1,65 @@
+git:
+  baseurl: https://github.com
+  prefix: QubesOS/qubes-
+  branch: release4.2
+  maintainers:
+    # marmarek
+    - '0064428F455451B3EBE78A7F063938BA42CFA724'
+    # simon
+    - '274E12AB03F2FE293765FC06DA0434BC706E1FCF'
+
+backend-vmm: xen
+debug: true
+verbose: true
+qubes-release: r4.2
+
+use-qubes-repo:
+  version: 4.2
+
+template-root-size: 30G
+
+gpg-client: qubes-gpg-client-wrapper
+sign-key:
+  rpm: FDD1B8244731B36C
+  deb: FDD1B8244731B36C
+
+distributions:
+  - vm-trixie
+
+templates:
+  - parrot:
+      dist: trixie
+      options:
+        - minimal
+        - parrot
+
+components:
+  - builder-debian:
+      packages: False
+      branch: main
+  - vmm-xen
+  - vmm-xen-guest
+  - core-vchan-xen
+  - core-qubesdb
+  - core-qrexec
+  - linux-utils
+  - core-agent-linux
+  - gui-common
+  - gui-agent-linux
+  - app-linux-split-gpg:
+      branch: main
+  - app-linux-input-proxy:
+      branch: main
+  - app-linux-usb-proxy:
+      branch: main
+  - meta-packages
+
+executor:
+ type: qubes
+ options:
+   dispvm: "executor-dvm"
+
+stages:
+  - fetch
+  - prep
+  - build

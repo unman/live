@@ -1,0 +1,119 @@
+git:
+  baseurl: https://github.com
+  prefix: QubesOS/qubes-
+  branch: main
+  maintainers:
+    # marmarek
+    - '0064428F455451B3EBE78A7F063938BA42CFA724'
+    # simon
+    - '274E12AB03F2FE293765FC06DA0434BC706E1FCF'
+
+backend-vmm: xen
+debug: true
+verbose: true
+qubes-release: r4.2
+
+#cache:
+#  vm-archlinux:
+#    packages:
+#      - bin86
+#      - bridge-utils
+#      - conntrack-tools
+#      - dconf
+#      - desktop-file-utils
+#      - dev86
+#      - fakeroot
+#      - gawk
+#      - gcc
+#      - git
+#      - gnome-packagekit
+#      - graphicsmagick
+#      - haveged
+#      - iasl
+#      - iproute2
+#      - iptables
+#      - librsvg
+#      - libsystemd
+#      - libutil-linux
+#      - libx11
+#      - lsb-release
+#      - lzo
+#      - make
+#      - make
+#      - networkmanager
+#      - nftables
+#      - notification-daemon
+#      - ntp
+#      - openssl
+#      - pacman-contrib
+#      - pandoc
+#      - parted
+#      - patch
+#      - pixman
+#      - pkg-config
+#      - procps-ng
+#      - python
+#      - python-dbus
+#      - python-gobject
+#      - python-lxml
+#      - python-setuptools
+#      - python-xdg
+#      - sed
+#      - shared-mime-info
+#      - socat
+#      - tinyproxy
+#      - wget
+#      - xdg-utils
+#      - yajl
+#      - zenity
+#      - blas
+#      - cblas
+#      - lapack
+#      - libimagequant
+#      - libraqm
+#      - openjpeg2
+#      - python-cairo
+#      - python-numpy
+#      - python-pillow
+
+distributions:
+  - vm-archlinux
+
+templates:
+  - blackarch:
+      dist: archlinux
+      options:
+        - minimal
+        - no-recommends
+        - blackarch
+
+components:
+  - builder-archlinux:
+      packages: False
+  - vmm-xen
+  - core-vchan-xen
+  - core-qubesdb
+  - core-qrexec
+  - linux-utils
+  - core-agent-linux
+  - gui-common
+  - gui-agent-linux
+  - app-linux-split-gpg
+  - app-linux-input-proxy
+  - app-linux-usb-proxy
+  - meta-packages
+
+executor:
+ type: qubes
+ options:
+   dispvm: "qubes-builder-dvm"
+
+    #executor:
+    #type: docker
+    #options:
+    #image: "qubes-builder-fedora:latest
+
+stages:
+  - fetch
+  - prep
+  - build
