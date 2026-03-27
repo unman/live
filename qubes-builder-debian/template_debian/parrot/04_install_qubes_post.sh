@@ -24,16 +24,7 @@ chroot_cmd apt-mark hold grub-pc
 
 
 sudo rm "${INSTALL_DIR}/etc/apt/sources.list"
-#sudo cat <<EOF > "${INSTALL_DIR}/etc/apt/sources.list.d/parrot.list"  
-# ParrotOS repository  
-#deb http://HTTPS///deb.parrot.sh/parrot rolling main contrib non-free non-free-firmware
-#deb http://HTTPS///deb.parrot.sh/parrot lory main contrib non-free non-free-firmware
-#deb http://HTTPS///deb.parrot.sh/parrot lory-security main contrib non-free non-free-firmware
-#deb http://HTTPS///deb.parrot.sh/parrot lory-backports main contrib non-free non-free-firmware
-#deb-src http://HTTPS///deb.parrot.sh/parrot lory main contrib non-free non-free-firmware
-#deb-src http://HTTPS///deb.parrot.sh/parrot lory-security main contrib non-free non-free-firmware
-#deb-src http://HTTPS///deb.parrot.sh/parrot lory-backports main contrib non-free non-free-firmware
-#EOF
+sudo cp ${TEMPLATE_CONTENT_DIR}/parrot/sources.list "${INSTALL_DIR}/etc/apt/sources.list
 sudo cp ${TEMPLATE_CONTENT_DIR}/parrot/parrot.list "${INSTALL_DIR}/etc/apt/sources.list.d/parrot.list"  
 
 ## Ensure proxy handling is set
@@ -47,14 +38,6 @@ debug " Installing packages from ParrotOS
 aptDistUpgrade
 
 cat <<EOF >> "${INSTALL_DIR}/etc/apt/preferences.d/1hold"  
-
-Package: wireguard
-Pin: release *
-Pin-Priority: -999
-
-Package: linux-image-5.4.0-4parrot1-amd64
-Pin: release *
-Pin-Priority: -999
 
 Package: linux-image-amd64
 Pin: release *
