@@ -12,10 +12,15 @@ backend-vmm: xen
 debug: true
 verbose: true
 qubes-release: r4.3
-
 use-qubes-repo:
   version: 4.3
+  testing: true
 
+
+#use-qubes-repo:
+# version: 4.3
+
+template-root-size: 20G
 
 gpg-client: qubes-gpg-client-wrapper
 sign-key:
@@ -26,16 +31,14 @@ distributions:
   - vm-trixie
 
 templates:
-  - parrot:
+  - debian-13-minimal:
       dist: trixie
       options:
         - minimal
-        - parrot
+        - no-recommends
 
 components:
-  - builder-debian:
-      packages: False
-      branch: main
+  #- builder-debian
   - vmm-xen
   - vmm-xen-guest
   - core-vchan-xen
@@ -53,11 +56,10 @@ components:
       branch: main
   - meta-packages
   - fwupd
-  - python3-looseversion
-  - qubes-repo-templates
-  - salt-common
-  - salt-ssh
-
+  - python-looseversion
+  - repo-templates
+  - mgmt-salt
+  - salt
 
 executor:
  type: qubes

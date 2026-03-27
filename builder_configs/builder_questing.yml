@@ -20,35 +20,45 @@ verbose: true
 qubes-release: r4.3
 
 distributions:
-  - vm-jammy
+  - vm-questing
 
 templates:
   # Using packages_jammy_minimal.list
-  - jammy-minimal:
-      dist: jammy
+  - questing-minimal:
+      dist: questing
       flavor: minimal
 
 
 components:
-  - builder-debian:
-      packages: False
+#  - builder-debian:
+#      packages: False
+#      branch: main
+  - vmm-xen:
       branch: main
-  - vmm-xen
-  - vmm-xen-guest
-  - core-vchan-xen
-  - core-qubesdb
-  - core-qrexec
-  - linux-utils
-  - core-agent-linux
-  - gui-common
-  - gui-agent-linux
+  - vmm-xen-guest:
+      branch: main
+  - core-vchan-xen:
+      branch: main
+  - core-qubesdb:
+      branch: main
+  - core-qrexec:
+      branch: main
+  - linux-utils:
+      branch: main
+  - core-agent-linux:
+      branch: main
+  - gui-common:
+      branch: main
+  - gui-agent-linux:
+      branch: main
   - app-linux-split-gpg:
       branch: main
   - app-linux-input-proxy:
       branch: main
   - app-linux-usb-proxy:
       branch: main
-  - meta-packages
+  - meta-packages:
+      branch: main
 
 executor:
  type: qubes

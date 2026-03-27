@@ -1,0 +1,101 @@
+git:
+  baseurl: https://github.com
+  prefix: QubesOS/qubes-
+  branch: release4.3
+  maintainers:
+    # marmarek
+    - '0064.38F455451B3EBE78A7F063938BA42CFA724'
+    # simon
+    - '274E12AB03F2FE293765FC06DA0434BC706E1FCF'
+
+backend-vmm: xen
+debug: true
+verbose: true
+qubes-release: r4.3
+
+
+template-root-size: 20G
+
+gpg-client: qubes-gpg-client-wrapper
+sign-key:
+  rpm: FDD1B8244731B36C
+  deb: FDD1B8244731B36C
+
+distributions:
+  - vm-forky
+
+templates:
+  - debian-14-minimal:
+      dist: forky
+      flavor: minimal
+
+components:
+##  - builder-debian
+#  - vmm-xen
+#  - vmm-xen-guest
+#  - core-vchan-xen
+#  - core-qubesdb
+#  - core-qrexec
+#  - linux-utils
+#  - core-agent-linux
+#  - gui-common
+#  - gui-agent-linux
+#  - app-linux-split-gpg:
+#      branch: main
+#  - app-linux-input-proxy:
+#      branch: main
+#  - app-linux-usb-proxy:
+#      branch: main
+#  - app-linux-pdf-converter:
+#      branch: main
+#  - qubes-notification-agent:
+#      branch: main
+#  - meta-packages:
+#      branch: main
+#  - repo-templates:
+#      branch: main
+#  - mgmt-salt:
+#      branch: main
+#  - salt:
+#      branch: main
+
+  - vmm-xen
+  - vmm-xen-guest
+  - core-vchan-xen
+  - core-qubesdb
+  - core-qrexec
+  - linux-utils
+  - core-agent-linux
+  - gui-common
+  - gui-agent-linux
+  - app-linux-split-gpg:
+      branch: main
+  - app-linux-input-proxy:
+      branch: main
+  - app-linux-usb-proxy:
+      branch: main
+  - app-linux-img-converter:
+      branch: main
+  - app-linux-pdf-converter:
+      branch: main
+  - notification-proxy:
+      branch: main
+  - meta-packages:
+      branch: main
+  - repo-templates:
+      branch: main
+  - mgmt-salt:
+      branch: main
+  - salt:
+      branch: main
+
+
+executor:
+ type: qubes
+ options:
+   dispvm: "executor-dvm"
+
+stages:
+  - fetch
+  - prep
+  - build

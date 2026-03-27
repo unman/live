@@ -4,14 +4,18 @@ git:
   branch: main
   maintainers:
     # marmarek
-    - '0064428F455451B3EBE78A7F063938BA42CFA724'
+    - '0064.38F455451B3EBE78A7F063938BA42CFA724'
     # simon
     - '274E12AB03F2FE293765FC06DA0434BC706E1FCF'
 
 backend-vmm: xen
 debug: true
 verbose: true
-qubes-release: r4.2
+qubes-release: r4.3
+
+use-qubes-repo:
+  version: 4.3
+template-root-sixe: "30G"
 
 #cache:
 #  vm-archlinux:
@@ -82,10 +86,10 @@ distributions:
 templates:
   - blackarch:
       dist: archlinux
+      flavor: blackarch
       options:
         - minimal
         - no-recommends
-        - blackarch
 
 components:
   - builder-archlinux:
@@ -106,7 +110,7 @@ components:
 executor:
  type: qubes
  options:
-   dispvm: "qubes-builder-dvm"
+   dispvm: "executor-dvm"
 
     #executor:
     #type: docker
