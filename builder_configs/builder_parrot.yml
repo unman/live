@@ -4,7 +4,7 @@ git:
   branch: release4.3
   maintainers:
     # marmarek
-    - '0064.38F455451B3EBE78A7F063938BA42CFA724'
+    - '0064428F455451B3EBE78A7F063938BA42CFA724'
     # simon
     - '274E12AB03F2FE293765FC06DA0434BC706E1FCF'
 
@@ -12,10 +12,6 @@ backend-vmm: xen
 debug: true
 verbose: true
 qubes-release: r4.3
-
-use-qubes-repo:
-  version: 4.3
-
 
 gpg-client: qubes-gpg-client-wrapper
 sign-key:
@@ -25,12 +21,19 @@ sign-key:
 distributions:
   - vm-trixie
 
+use-qubes-repo:
+  version: 4.3
+
+
+template-root-size: "30G"
+
 templates:
-  - parrot:
+  - ParrotOS-7.1:
       dist: trixie
+      flavor: parrot
       options:
         - minimal
-        - parrot
+        - no-recommends
 
 components:
   - builder-debian:
@@ -52,12 +55,6 @@ components:
   - app-linux-usb-proxy:
       branch: main
   - meta-packages
-  - fwupd
-  - python3-looseversion
-  - qubes-repo-templates
-  - salt-common
-  - salt-ssh
-
 
 executor:
  type: qubes
