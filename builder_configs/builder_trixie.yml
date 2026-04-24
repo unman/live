@@ -37,7 +37,8 @@ templates:
         - minimal
 
 components:
-  #- builder-debian
+#  - builder-debian:
+#      branch: main
   - vmm-xen
   - vmm-xen-guest
   - core-vchan-xen

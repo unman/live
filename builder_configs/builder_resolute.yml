@@ -1,20 +1,12 @@
 git:
   baseurl: https://github.com
   prefix: QubesOS/qubes-
-  branch: release4.3
+  branch: main
   maintainers:
     # marmarek
     - '0064428F455451B3EBE78A7F063938BA42CFA724'
     # simon
     - '274E12AB03F2FE293765FC06DA0434BC706E1FCF'
-
-backend-vmm: xen
-debug: true
-verbose: true
-qubes-release: r4.3
-
-use-qubes-repo:
-  version: 4.3
 
 
 gpg-client: qubes-gpg-client-wrapper
@@ -22,15 +14,20 @@ sign-key:
   rpm: FDD1B8244731B36C
   deb: FDD1B8244731B36C
 
+backend-vmm: xen
+debug: true
+verbose: true
+qubes-release: r4.3
+
 distributions:
-  - vm-trixie
+  - vm-resolute
 
 templates:
-  - parrot:
-      dist: trixie
-      options:
-        - minimal
-        - parrot
+  # Using packages_jammy_minimal.list
+  - resolute-minimal:
+      dist: resolute
+      flavor: minimal
+
 
 components:
   - builder-debian:
@@ -52,12 +49,6 @@ components:
   - app-linux-usb-proxy:
       branch: main
   - meta-packages
-  - fwupd
-  - python3-looseversion
-  - qubes-repo-templates
-  - salt-common
-  - salt-ssh
-
 
 executor:
  type: qubes
