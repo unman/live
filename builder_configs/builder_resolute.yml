@@ -23,10 +23,8 @@ distributions:
   - vm-resolute
 
 templates:
-  # Using packages_jammy_minimal.list
-  - resolute-minimal:
+  - resolute:
       dist: resolute
-      flavor: minimal
 
 
 components:
@@ -48,7 +46,20 @@ components:
       branch: main
   - app-linux-usb-proxy:
       branch: main
+  - app-linux-pdf-converter:
+      branch: main
+  - app-linux-img-converter:
+      branch: main
+#  - mgmt-salt:
+#      branch: main
+  - fwupd:
+      branch: release4.3
+  - repo-templates:
+      branch: main
   - meta-packages
+  - salt:
+      branch: main
+
 
 executor:
  type: qubes
